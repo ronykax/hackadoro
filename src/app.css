@@ -1,1 +1,24 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@layer base {
+    @import url(https://fonts.googleapis.com/css?family=Inter:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+}
+
+:root {
+    --red: #ec3750;
+    --blue: #338eda;
+    --green: #33d6a6;
+    --darkless: #17171d;
+}
+
+@theme inline {
+    --color-red: var(--red);
+    --color-blue: var(--blue);
+    --color-green: var(--green);
+    --color-darkless: var(--darkless);
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    @apply bg-darkless text-white;
+}
