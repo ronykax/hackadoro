@@ -1,38 +1,29 @@
 import { writable } from "svelte/store";
 
-export interface Timer {
-    time: string;
-    name: string;
-    color: string;
-}
+let interval: ReturnType<typeof setInterval>;
+// const time = 30 * 1000; // 30 seconds
 
-export const timers: Timer[] = [
-    { time: "05:00", name: "short break", color: "bg-green/25" },
-    { time: "15:00", name: "long break", color: "bg-blue/25" },
-    { time: "25:00", name: "locked in", color: "bg-red/25" },
-];
-
-export const timer = writable<Timer>(timers[0]);
+export const countdown = writable(0);
 export const running = writable(false);
-export const timeLeft = writable(timers[0].time);
 
-let interval: any;
+export function start(at: number) {
+    countdown.set(at);
 
-export function start() {
-    stop();
-    running.set(true);
+    running.update((isRunning) => {
+        if (isRunning) return true; // already running so do nothing
 
-    const [min, sec] = getTimeParts(timers[0].time);
-    let total = min * 60 + sec;
+        interval = setInterval(() => {
+            countdown.update((value) => {
+                if (value <= 0) {
+                    stop(); // auto stop at 0
+                    return 0;
+                }
+                return value - 1000;
+            });
+        }, 1000);
 
-    interval = setInterval(() => {
-        total--;
-        const m = Math.floor(total / 60).toString().padStart(2, "0");
-        const s = (total % 60).toString().padStart(2, "0");
-        timeLeft.set(`${m}:${s}`);
-
-        if (total <= 0) stop();
-    }, 1000);
+        return true;
+    });
 }
 
 export function stop() {
@@ -40,7 +31,7 @@ export function stop() {
     running.set(false);
 }
 
-function getTimeParts(time: string): [number, number] {
-    const [m, s] = time.split(":").map(Number);
-    return [m, s];
+export function reset(to: number) {
+    stop();
+    countdown.set(to);
 }

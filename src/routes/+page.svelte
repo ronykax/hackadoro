@@ -1,15 +1,19 @@
 <script lang="ts">
-    import { timer, timers, running, start, stop } from "$lib/stores/timer";
+    import { formatTime } from "$lib";
+    import { countdown, start, stop, reset, running } from "$lib/stores/timer";
     import { onMount } from "svelte";
+    import Button from "../components/button.svelte";
+    import { blur, fade } from "svelte/transition";
 
-    onMount(() => timer.set(timers[0]));
+    let count = $state(0);
+    onMount(() => (count = 5 * 60 * 1000));
 </script>
 
 <div
-    class="max-w-xl mx-auto px-8 py-4 rounded-b-2xl bg-red flex justify-between"
+    class="max-w-xl mx-auto px-8 py-4 rounded-b-2xl bg-red-500 flex justify-between"
 >
     <div class="">
-        <span class="text-2xl font-bold tracking-tight">hackadoro</span>
+        <span class="text-2xl font-bold">hackadoro</span>
     </div>
 </div>
 
@@ -25,27 +29,24 @@
         {/each}
     </div> -->
 
-    <span class="font-mono font-bold text-9xl [text-shadow:0_8px_0_black]">
-        {$timer.time}
+    <span class="font-bold text-8xl [text-shadow:0_8px_0_black]">
+        {#if running}
+            <!-- {#key $countdown}
+            {/key} -->
+            <span transition:fade>{formatTime($countdown)}</span>
+        {:else}
+            {formatTime(count)}
+        {/if}
     </span>
 
     <div class="flex gap-4 w-full justify-center mt-12">
-        <button
-            onclick={start}
-            class={`cursor-pointer duration-75 bg-red px-4 py-2 text-2xl font-bold rounded-2xl tracking-tight border-2 border-black hover:translate-y-0.5 active:translate-y-2 [box-shadow:0_8px_0_rgba(0,0,0,1)] hover:[box-shadow:0_6px_0_rgba(0,0,0,1)] active:[box-shadow:0_0_0_rgba(0,0,0,1)]`}
-        >
-            start
-        </button>
-        <button
-            class={`cursor-pointer duration-75 bg-red px-4 py-2 text-2xl font-bold rounded-2xl tracking-tight border-2 border-black hover:translate-y-0.5 active:translate-y-2 [box-shadow:0_8px_0_rgba(0,0,0,1)] hover:[box-shadow:0_6px_0_rgba(0,0,0,1)] active:[box-shadow:0_0_0_rgba(0,0,0,1)]`}
-        >
-            pause
-        </button>
-        <button
-            onclick={stop}
-            class={`cursor-pointer duration-75 bg-red px-4 py-2 text-2xl font-bold rounded-2xl tracking-tight border-2 border-black hover:translate-y-0.5 active:translate-y-2 [box-shadow:0_8px_0_rgba(0,0,0,1)] hover:[box-shadow:0_6px_0_rgba(0,0,0,1)] active:[box-shadow:0_0_0_rgba(0,0,0,1)]`}
-        >
-            stop
-        </button>
+        <Button class="bg-green-600" onclick={() => start(count)}>start</Button>
+        <Button class="bg-red-500" onclick={stop}>stop</Button>
+        <Button class="bg-gray-600" onclick={() => reset(count)}>reset</Button>
     </div>
+
+    <!-- <button class="cursor-pointer" onclick={() => (count += 5 * 60 * 1000)}
+        >plus</button
+    >
+    <button class="cursor-pointer">minus</button> -->
 </div>
